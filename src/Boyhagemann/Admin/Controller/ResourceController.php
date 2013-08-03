@@ -13,6 +13,9 @@ use Pages\Section;
 use Pages\Page;
 use Pages\Block;
 use Pages\Content;
+use Navigation\Container;
+use Navigation\Node;
+use Admin\Resource;
 
 class ResourceController extends CrudController
 {
@@ -48,14 +51,24 @@ class ResourceController extends CrudController
     {        
         // Add it to the database
         Input::replace(compact('title', 'url', 'controller'));     
-        $model = $this->getModel();
-        $this->prepare($model);
-        $model->save();
+        $resource = $this->getModel();
+        $this->prepare($resource);
+        $resource->save();        
+    }
+    
+    /**
+     * 
+     * @param \Admin\Resource $resource
+     */
+    public function savePages(Resource $resource)
+    {
+        $controller = $resource->controller;
+        $title = $resource->title;
         
         // Create pages
         foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
                         
-            $route = '/' . trim($model->url, '/');
+            $route = '/' . trim($resource->url, '/');
             if($action != 'index') {
                  $route .= '/' . $action;
             }
@@ -67,6 +80,7 @@ class ResourceController extends CrudController
             $page->title = $title . ' ' . ucfirst($action);
             $page->route = $route;
             $page->layout()->associate($layout);
+            $page->resource()->associate($resource);
             $page->save();
             
             $block = new Block;
@@ -80,6 +94,30 @@ class ResourceController extends CrudController
             $content->block()->associate($block);
             $content->save();
         }
+        
+    }
+    
+    public function saveNavigation(Resource $resource) 
+    {
+        $container = Container::whereName('admin')->first();
+        $pages = $resource->pages;
+        
+        foreach($pages as $page) {
+            
+            $node = new Node;
+            $node->title = $page->title;
+            $node->route = $page->route;
+            $node->container()->associate($container);            
+            $node->save();
+                        
+            if(trim($page->route, '/') == $resource->url) {
+                $root = $node;
+            }
+            else {
+                $node->makeChildOf($root);                
+            }
+        }
+        
     }
 
     /**
@@ -98,6 +136,7 @@ class ResourceController extends CrudController
     public function buildModel(ModelBuilder $mb)
     {
         $mb->name('Admin\Resource')->table('resources');
+        $mb->hasMany('Pages\Page')->alias('pages');
     }
 
     /**

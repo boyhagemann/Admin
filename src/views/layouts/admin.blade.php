@@ -15,7 +15,7 @@
 
 		<!-- CSS
 		================================================== -->
-		<link href="{{{ URL::asset('css/bootstrap.min.css') }}}" rel="stylesheet">
+		<link href="{{{ URL::asset('packages/boyhagemann/admin/css/bootstrap.min.css') }}}" rel="stylesheet">
 		<link href="{{{ URL::asset('css/screen.css') }}}" rel="stylesheet">
 
                 
@@ -31,12 +31,7 @@
 	<body>
             
             <div class="navbar navbar-static-top">
-                <a class="navbar-brand" href="#">Title</a>
-                <ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a href="#">Link</a></li>
-                  <li><a href="#">Link</a></li>
-                </ul>
+                {{ $menu }}
             </div>
 
 		<!-- Container -->

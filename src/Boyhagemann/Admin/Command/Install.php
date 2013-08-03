@@ -34,7 +34,7 @@ class Install extends Command {
                     '--bench' => 'boyhagemann/admin' 
                 ));
                 
-                foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content') as $table) {                    
+                foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content', 'navigation_container', 'navigation_node') as $table) {                    
                     if(Schema::hasTable($table)) {
                         Schema::drop($table);
                     }
@@ -47,8 +47,9 @@ class Install extends Command {
                 $block      = App::make('Boyhagemann\Pages\Controller\BlockController');
                 $page       = App::make('Boyhagemann\Pages\Controller\PageController');
                 $content    = App::make('Boyhagemann\Pages\Controller\ContentController');
-                           
-                
+                $container  = App::make('Boyhagemann\Navigation\Controller\ContainerController');
+                $node       = App::make('Boyhagemann\Navigation\Controller\NodeController');
+                                        
                 
 		echo 'Seeding resources...'.PHP_EOL;
                 \Pages\Layout::create(array(
@@ -65,6 +66,25 @@ class Install extends Command {
                     'name' => 'sidebar',
                     'layout_id' => 1,
                 ));
+                $mainMenu = \Pages\Section::create(array(
+                    'title' => 'Main Menu',
+                    'name' => 'menu',
+                    'layout_id' => 1,
+                ));
+                \Navigation\Container::create(array(
+                    'title' => 'Admin menu',
+                    'name' => 'admin',
+                ));
+                \Pages\Block::create(array(
+                    'title' => 'Admin menu',
+                    'controller' => 'Boyhagemann\Navigation\Controller\MenuController@admin',
+                ));
+                \Pages\Content::create(array(
+                    'page_id' => 1,
+                    'section_id' => $mainMenu->id,
+                    'block_id' => 1,
+                    'global' => 1,
+                ));
                 
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
@@ -72,6 +92,13 @@ class Install extends Command {
                 $controller->save('Block', 'admin/blocks', get_class($block));
                 $controller->save('Pages', 'admin/pages', get_class($page));
                 $controller->save('Content', 'admin/content', get_class($content));
+                
+                 
+		echo 'Creating pages and navigation...'.PHP_EOL;
+                foreach(App::make('Admin\Resource')->get() as $resource) {
+                    $controller->savePages($resource);
+                    $controller->saveNavigation($resource);
+                }
 
 		echo 'Done.'.PHP_EOL;
 	}
