@@ -6,7 +6,7 @@ use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
-use Route, View;
+use Route, View, Input, App;
 
 class ResourceController extends CrudController
 {
@@ -30,6 +30,21 @@ class ResourceController extends CrudController
         $route = 'admin.resources';
         
         return View::make('crud::crud/create', compact('form', 'model', 'route'));
+    }
+    
+    /**
+     * 
+     * @param type $title
+     * @param type $url
+     * @param type $controller
+     */
+    public function save($title, $url, $controller)
+    {        
+        // Add it to the database
+        Input::replace(compact('title', 'url', 'controller'));         
+        $model = $this->getModel();
+        $this->prepare($model);
+        $model->save();
     }
 
     /**
