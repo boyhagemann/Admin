@@ -8,6 +8,12 @@ use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
 use Route, View, Input, App;
 
+use Pages\Layout;
+use Pages\Section;
+use Pages\Page;
+use Pages\Block;
+use Pages\Content;
+
 class ResourceController extends CrudController
 {
 
@@ -41,10 +47,39 @@ class ResourceController extends CrudController
     public function save($title, $url, $controller)
     {        
         // Add it to the database
-        Input::replace(compact('title', 'url', 'controller'));         
+        Input::replace(compact('title', 'url', 'controller'));     
         $model = $this->getModel();
         $this->prepare($model);
         $model->save();
+        
+        // Create pages
+        foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
+                        
+            $route = '/' . trim($model->url, '/');
+            if($action != 'index') {
+                 $route .= '/' . $action;
+            }
+            
+            $layout = Layout::whereName('admin::layouts.admin')->first();
+            $section = Section::whereName('content')->first();
+            
+            $page = new Page;
+            $page->title = $title . ' ' . ucfirst($action);
+            $page->route = $route;
+            $page->layout()->associate($layout);
+            $page->save();
+            
+            $block = new Block;
+            $block->title = $page->title;
+            $block->controller = $controller . '@' . $action;
+            $block->save();
+            
+            $content = new Content;
+            $content->page()->associate($page);
+            $content->section()->associate($section);
+            $content->block()->associate($block);
+            $content->save();
+        }
     }
 
     /**

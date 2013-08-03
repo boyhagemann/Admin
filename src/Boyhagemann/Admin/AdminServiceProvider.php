@@ -22,7 +22,7 @@ class AdminServiceProvider extends ServiceProvider {
             $this->package('Boyhagemann\Admin', 'admin');
             
             $this->app->register('Boyhagemann\Pages\PagesServiceProvider');
-//            $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');   
+            $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');   
 	}
 
         public function boot()
@@ -33,7 +33,7 @@ class AdminServiceProvider extends ServiceProvider {
             
             Route::get('admin/resources/import/{class}', 'Boyhagemann\Admin\Controller\ResourceController@import')->where('class', '(.*)');
             Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');
-            Route::resource('admin/resources', 'Boyhagemann\Admin\Controller\ResourceController');
+            Route::resource('admin/resources', 'Boyhagemann\Admin\Controller\ResourceController');            
         }
         
         /**

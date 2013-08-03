@@ -3,7 +3,7 @@
 namespace Boyhagemann\Admin\Command;
 
 use Illuminate\Console\Command;
-use App;
+use App, Schema;
 
 class Install extends Command {
 
@@ -34,6 +34,11 @@ class Install extends Command {
                     '--bench' => 'boyhagemann/admin' 
                 ));
                 
+                foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content') as $table) {                    
+                    if(Schema::hasTable($table)) {
+                        Schema::drop($table);
+                    }
+                }
                 
 		echo 'Creating resources...'.PHP_EOL;
                 $controller = App::make('Boyhagemann\Admin\Controller\ResourceController');                
@@ -42,7 +47,25 @@ class Install extends Command {
                 $block      = App::make('Boyhagemann\Pages\Controller\BlockController');
                 $page       = App::make('Boyhagemann\Pages\Controller\PageController');
                 $content    = App::make('Boyhagemann\Pages\Controller\ContentController');
-                                
+                           
+                
+                
+		echo 'Seeding resources...'.PHP_EOL;
+                \Pages\Layout::create(array(
+                    'title' => 'Admin Layout',
+                    'name' => 'admin::layouts.admin',
+                ));
+                \Pages\Section::create(array(
+                    'title' => 'Main content',
+                    'name' => 'content',
+                    'layout_id' => 1,
+                ));
+                \Pages\Section::create(array(
+                    'title' => 'Sidebar',
+                    'name' => 'sidebar',
+                    'layout_id' => 1,
+                ));
+                
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
                 $controller->save('Section', 'admin/sections', get_class($section));
