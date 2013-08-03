@@ -92,6 +92,8 @@ class Install extends Command {
                 $controller->save('Block', 'admin/blocks', get_class($block));
                 $controller->save('Pages', 'admin/pages', get_class($page));
                 $controller->save('Content', 'admin/content', get_class($content));
+                $controller->save('Container', 'admin/containers', get_class($container));
+                $controller->save('Node', 'admin/nodes', get_class($node));
                 
                  
 		echo 'Creating pages and navigation...'.PHP_EOL;
