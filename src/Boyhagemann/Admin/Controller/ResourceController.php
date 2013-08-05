@@ -6,7 +6,7 @@ use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
-use Route, View, Input, App;
+use Route, View, Input, App, Str;
 
 use Pages\Layout;
 use Pages\Section;
@@ -71,13 +71,18 @@ class ResourceController extends CrudController
             $route = '/' . trim($resource->url, '/');
             if($action != 'index') {
                  $route .= '/' . $action;
+		 $title = $action;
             }
+	    else {
+ 		 $title = Str::plural($resource->title);
+	    }
+
             
             $layout = Layout::whereName('admin::layouts.admin')->first();
             $section = Section::whereName('content')->first();
             
             $page = new Page;
-            $page->title = $title . ' ' . ucfirst($action);
+            $page->title = $title;
             $page->route = $route;
             $page->layout()->associate($layout);
             $page->resource()->associate($resource);
