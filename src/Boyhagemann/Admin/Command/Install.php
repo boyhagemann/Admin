@@ -80,10 +80,10 @@ class Install extends Command {
                     'controller' => 'Boyhagemann\Navigation\Controller\MenuController@admin',
                 ));
                 \Pages\Content::create(array(
+                    'global' => 1,
                     'page_id' => 1,
                     'section_id' => $mainMenu->id,
                     'block_id' => 1,
-                    'global' => 1,
                 ));
                 
 		echo 'Registering resources...'.PHP_EOL;
