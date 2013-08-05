@@ -30,10 +30,13 @@ class AdminServiceProvider extends ServiceProvider {
             Route::get('admin', function() {
                 return View::make('admin::index.index');
             });
+
+	    foreach(\Admin\Resource::get() as $resource) {
+		Route::resource($resource->url, $resource->controller);
+	    }
             
             Route::get('admin/resources/import/{class}', 'Boyhagemann\Admin\Controller\ResourceController@import')->where('class', '(.*)');
-            Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');
-            Route::resource('admin/resources', 'Boyhagemann\Admin\Controller\ResourceController');            
+            Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');         
         }
         
         /**
