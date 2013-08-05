@@ -22,7 +22,7 @@ class AdminServiceProvider extends ServiceProvider {
             $this->package('Boyhagemann\Admin', 'admin');
             
             $this->app->register('Boyhagemann\Pages\PagesServiceProvider');
-            $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');   
+            $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');  
 	}
 
         public function boot()
