@@ -72,16 +72,19 @@ class Install extends Command {
                     'name' => 'admin::layouts.admin',
                 ));
                 Section::create(array(
+                    'id' => 1,
                     'title' => 'Main content',
                     'name' => 'content',
                     'layout_id' => 1,
                 ));
                 Section::create(array(
+                    'id' => 2,
                     'title' => 'Sidebar',
                     'name' => 'sidebar',
                     'layout_id' => 1,
                 ));
-                $mainMenu = Section::create(array(
+                Section::create(array(
+                    'id' => 3,
                     'title' => 'Main Menu',
                     'name' => 'menu',
                     'layout_id' => 1,
@@ -91,13 +94,19 @@ class Install extends Command {
                     'name' => 'admin',
                 ));
                 Block::create(array(
+                    'id' => 1,
                     'title' => 'Admin menu',
                     'controller' => 'Boyhagemann\Navigation\Controller\MenuController@admin',
+                ));
+                Block::create(array(
+                    'id' => 2,
+                    'title' => 'Import resource',
+                    'controller' => 'Boyhagemann\Admin\Controller\ResourceController@import',
                 ));
                 Content::create(array(
                     'global' => 1,
                     'page_id' => 1,
-                    'section_id' => $mainMenu->id,
+                    'section_id' => 3,
                     'block_id' => 1,
                 ));
 

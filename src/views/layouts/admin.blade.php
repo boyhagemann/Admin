@@ -39,8 +39,8 @@
 
                     <div class="row">
                         
-                        <div class="span9">{{ $content }}</div>
-                        <div class="span3">{{ $sidebar }}</div>
+                        <div class="col-lg-9">{{ $content }}</div>
+                        <div class="col-lg-3">{{ $sidebar }}</div>
                     </div>                    
                     
                     

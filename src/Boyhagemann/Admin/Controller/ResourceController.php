@@ -39,7 +39,7 @@ class ResourceController extends CrudController
         $model = $this->getModel();
         $route = 'admin.resources';
         
-        return View::make('crud::crud/create', compact('form', 'model', 'route'));
+        return View::make('admin::resource/import', compact('form', 'model', 'route'));
     }
     
     /**
@@ -65,7 +65,7 @@ class ResourceController extends CrudController
     {
         $controller = $resource->controller;
         $title = $resource->title;
-		$var = substr($resource->url, strrpos($resource->url, '/') + 1);
+        $var = substr($resource->url, strrpos($resource->url, '/') + 1);
         
         // Create pages
         foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
@@ -97,9 +97,21 @@ class ResourceController extends CrudController
             
             $content = new Content;
             $content->page()->associate($page);
-            $content->section()->associate($section);
-            $content->block()->associate($block);
+            $content->section_id = 1;
+            $content->block_id = $block->id;
+            if(in_array($action, array('edit', 'update', 'delete'))) {
+                $content->match = array('id' => $var);
+            }
             $content->save();
+            
+            $content = new Content;
+            $content->page()->associate($page);
+            $content->section_id = 2;
+            $content->block_id = 2;
+            $content->params = array('class' => $controller);
+            $content->save();
+            
+            
         }
         
     }
