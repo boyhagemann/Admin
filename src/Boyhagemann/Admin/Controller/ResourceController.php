@@ -15,8 +15,8 @@ use Boyhagemann\Pages\Model\Block;
 use Boyhagemann\Pages\Model\Content;
 use Boyhagemann\Admin\Model\Resource;
 
-use Navigation\Container;
-use Navigation\Node;
+use Boyhagemann\Navigation\Model\Container;
+use Boyhagemann\Navigation\Model\Node;
 
 class ResourceController extends CrudController
 {
