@@ -35,10 +35,6 @@ class Install extends Command {
 	{
 		echo 'Installing...'.PHP_EOL;
 
-                $this->call('asset:publish', array(
-                    '--bench' => 'boyhagemann/admin' 
-                ));
-
                 foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content', 'navigation_container', 'navigation_node') as $table) {
                     if(Schema::hasTable($table)) {
                         Schema::drop($table);
