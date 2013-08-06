@@ -1,7 +1,7 @@
 <?php namespace Boyhagemann\Admin;
 
 use Illuminate\Support\ServiceProvider;
-use Route, View, Artisan;
+use Route, View, Artisan, Schema;
 
 class AdminServiceProvider extends ServiceProvider {
 
@@ -31,9 +31,13 @@ class AdminServiceProvider extends ServiceProvider {
                 return View::make('admin::index.index');
             });
 
-	    foreach(\Admin\Resource::get() as $resource) {
-		Route::resource($resource->url, $resource->controller);
+
+	    if(Schema::hasTable('resources')) {
+	        //foreach(\Admin\Resource::get() as $resource) {
+		    //Route::resource($resource->url, $resource->controller);
+	        //}
 	    }
+
             
             Route::get('admin/resources/import/{class}', 'Boyhagemann\Admin\Controller\ResourceController@import')->where('class', '(.*)');
             Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');         

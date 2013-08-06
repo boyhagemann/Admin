@@ -3,6 +3,11 @@
 namespace Boyhagemann\Admin\Command;
 
 use Illuminate\Console\Command;
+use Boyhagemann\Pages\Model\Layout;
+use Boyhagemann\Pages\Model\Section;
+use Boyhagemann\Pages\Model\Page;
+use Boyhagemann\Pages\Model\Block;
+use Boyhagemann\Pages\Model\Content;
 use App, Schema;
 
 class Install extends Command {
@@ -33,40 +38,54 @@ class Install extends Command {
                 $this->call('asset:publish', array(
                     '--bench' => 'boyhagemann/admin' 
                 ));
-                
-                foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content', 'navigation_container', 'navigation_node') as $table) {                    
+
+                foreach(array('resources', 'layouts', 'sections', 'blocks', 'pages', 'content', 'navigation_container', 'navigation_node') as $table) {
                     if(Schema::hasTable($table)) {
                         Schema::drop($table);
                     }
                 }
                 
 		echo 'Creating resources...'.PHP_EOL;
-                $controller = App::make('Boyhagemann\Admin\Controller\ResourceController');                
-                $layout     = App::make('Boyhagemann\Pages\Controller\LayoutController');
-                $section    = App::make('Boyhagemann\Pages\Controller\SectionController');
-                $block      = App::make('Boyhagemann\Pages\Controller\BlockController');
-                $page       = App::make('Boyhagemann\Pages\Controller\PageController');
-                $content    = App::make('Boyhagemann\Pages\Controller\ContentController');
-                $container  = App::make('Boyhagemann\Navigation\Controller\ContainerController');
-                $node       = App::make('Boyhagemann\Navigation\Controller\NodeController');
-                                        
-                
+                $controller = App::make('Boyhagemann\Admin\Controller\ResourceController');
+				$controller->getModelBuilder()->export();
+
+                $layout = App::make('Boyhagemann\Pages\Controller\LayoutController');
+				$layout->getModelBuilder()->export();
+
+                $section = App::make('Boyhagemann\Pages\Controller\SectionController');
+				$section->getModelBuilder()->export();
+
+                $block = App::make('Boyhagemann\Pages\Controller\BlockController');
+				$block->getModelBuilder()->export();
+
+                $page = App::make('Boyhagemann\Pages\Controller\PageController');
+				$page->getModelBuilder()->export();
+
+                $content = App::make('Boyhagemann\Pages\Controller\ContentController');
+				$content->getModelBuilder()->export();
+
+                $container = App::make('Boyhagemann\Navigation\Controller\ContainerController');
+				$container->getModelBuilder()->export();
+
+                $node = App::make('Boyhagemann\Navigation\Controller\NodeController');
+				$node->getModelBuilder()->export();
+
 		echo 'Seeding resources...'.PHP_EOL;
-                \Pages\Layout::create(array(
+                Layout::create(array(
                     'title' => 'Admin Layout',
                     'name' => 'admin::layouts.admin',
                 ));
-                \Pages\Section::create(array(
+                Section::create(array(
                     'title' => 'Main content',
                     'name' => 'content',
                     'layout_id' => 1,
                 ));
-                \Pages\Section::create(array(
+                Section::create(array(
                     'title' => 'Sidebar',
                     'name' => 'sidebar',
                     'layout_id' => 1,
                 ));
-                $mainMenu = \Pages\Section::create(array(
+                $mainMenu = Section::create(array(
                     'title' => 'Main Menu',
                     'name' => 'menu',
                     'layout_id' => 1,
@@ -75,17 +94,17 @@ class Install extends Command {
                     'title' => 'Admin menu',
                     'name' => 'admin',
                 ));
-                \Pages\Block::create(array(
+                Block::create(array(
                     'title' => 'Admin menu',
                     'controller' => 'Boyhagemann\Navigation\Controller\MenuController@admin',
                 ));
-                \Pages\Content::create(array(
+                Content::create(array(
                     'global' => 1,
                     'page_id' => 1,
                     'section_id' => $mainMenu->id,
                     'block_id' => 1,
                 ));
-                
+
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
                 $controller->save('Section', 'admin/sections', get_class($section));
@@ -94,10 +113,10 @@ class Install extends Command {
                 $controller->save('Content', 'admin/content', get_class($content));
                 $controller->save('Container', 'admin/containers', get_class($container));
                 $controller->save('Node', 'admin/nodes', get_class($node));
-                
-                 
+
+
 		echo 'Creating pages and navigation...'.PHP_EOL;
-                foreach(App::make('Admin\Resource')->get() as $resource) {
+                foreach(App::make('Boyhagemann\Admin\Model\Resource')->get() as $resource) {
                     $controller->savePages($resource);
                     $controller->saveNavigation($resource);
                 }

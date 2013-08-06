@@ -8,14 +8,15 @@ use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
 use Route, View, Input, App, Str;
 
-use Pages\Layout;
-use Pages\Section;
-use Pages\Page;
-use Pages\Block;
-use Pages\Content;
+use Boyhagemann\Pages\Model\Layout;
+use Boyhagemann\Pages\Model\Section;
+use Boyhagemann\Pages\Model\Page;
+use Boyhagemann\Pages\Model\Block;
+use Boyhagemann\Pages\Model\Content;
+use Boyhagemann\Admin\Model\Resource;
+
 use Navigation\Container;
 use Navigation\Node;
-use Admin\Resource;
 
 class ResourceController extends CrudController
 {
@@ -58,19 +59,20 @@ class ResourceController extends CrudController
     
     /**
      * 
-     * @param \Admin\Resource $resource
+     * @param \Boyhagemann\Admin\Model\Resource $resource
      */
     public function savePages(Resource $resource)
     {
         $controller = $resource->controller;
         $title = $resource->title;
+		$var = substr($resource->url, strrpos($resource->url, '/') + 1);
         
         // Create pages
         foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
                         
             $route = '/' . trim($resource->url, '/');
             if($action != 'index') {
-                 $route .= '/' . $action;
+                 $route .= sprintf('/{%s}/%s', $var, $action);
 		 $title = $action;
             }
 	    else {
@@ -85,7 +87,7 @@ class ResourceController extends CrudController
             $page->title = $title;
             $page->route = $route;
             $page->layout()->associate($layout);
-            $page->resource()->associate($resource);
+//            $page->resource()->associate($resource);
             $page->save();
             
             $block = new Block;
@@ -140,8 +142,8 @@ class ResourceController extends CrudController
      */
     public function buildModel(ModelBuilder $mb)
     {
-        $mb->name('Admin\Resource')->table('resources');
-        $mb->hasMany('Pages\Page')->alias('pages');
+        $mb->name('Boyhagemann\Admin\Model\Resource')->table('resources');
+        $mb->hasMany('Boyhagemann\Pages\Model\Page')->alias('pages');
     }
 
     /**
