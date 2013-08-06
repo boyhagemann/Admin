@@ -5,9 +5,9 @@ namespace Boyhagemann\Admin\Command;
 use Illuminate\Console\Command;
 use Boyhagemann\Pages\Model\Layout;
 use Boyhagemann\Pages\Model\Section;
-use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Block;
 use Boyhagemann\Pages\Model\Content;
+use Boyhagemann\Navigation\Model\Container;
 use App, Schema;
 
 class Install extends Command {
@@ -86,7 +86,7 @@ class Install extends Command {
                     'name' => 'menu',
                     'layout_id' => 1,
                 ));
-                \Navigation\Container::create(array(
+                Container::create(array(
                     'title' => 'Admin menu',
                     'name' => 'admin',
                 ));
