@@ -115,6 +115,9 @@ class ResourceController extends CrudController
 
 			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $method, 'admin::layouts.admin', 'content', null, $match);
 
+			$page->resource()->associate($resource);
+			$page->save();
+
             $content = new Content;
             $content->page()->associate($page);
             $content->section_id = 2;
@@ -123,14 +126,14 @@ class ResourceController extends CrudController
             $content->save();
 
         }
-        
+
     }
     
     public function saveNavigation(Resource $resource) 
     {
         $container = Container::whereName('admin')->first();
         $pages = $resource->pages;
-        
+
         foreach($pages as $page) {
             
             $node = new Node;
