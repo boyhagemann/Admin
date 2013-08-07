@@ -3,6 +3,7 @@
 namespace Boyhagemann\Admin\Command;
 
 use Illuminate\Console\Command;
+use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Layout;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Pages\Model\Block;
@@ -71,6 +72,10 @@ class Install extends Command {
                     'title' => 'Admin Layout',
                     'name' => 'admin::layouts.admin',
                 ));
+				Layout::create(array(
+					'title' => 'Default Layout',
+					'name' => 'layouts.default',
+				));
                 Section::create(array(
                     'id' => 1,
                     'title' => 'Main content',
@@ -100,8 +105,8 @@ class Install extends Command {
                 ));
                 Block::create(array(
                     'id' => 2,
-                    'title' => 'Import resource',
-                    'controller' => 'Boyhagemann\Admin\Controller\ResourceController@import',
+                    'title' => 'Copy resource',
+                    'controller' => 'Boyhagemann\Admin\Controller\ResourceController@copy',
                 ));
                 Content::create(array(
                     'global' => 1,
@@ -109,6 +114,8 @@ class Install extends Command {
                     'section_id' => 3,
                     'block_id' => 1,
                 ));
+
+				Page::createWithContent('Admin home', '/admin', 'Boyhagemann\Admin\Controller\IndexController@index');
 
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));

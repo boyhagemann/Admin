@@ -33,10 +33,6 @@ class AdminServiceProvider extends ServiceProvider {
 			Route::get('admin/resources/import/{class}', 'Boyhagemann\Admin\Controller\ResourceController@import')->where('class', '(.*)');
 			Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');
 
-			Route::get('admin', function() {
-				return View::make('admin::index.index');
-			});
-
 			if(Schema::hasTable('resources')) {
 				foreach(\Boyhagemann\Admin\Model\Resource::get() as $resource) {
 					Route::resource($resource->url, $resource->controller);
@@ -51,7 +47,7 @@ class AdminServiceProvider extends ServiceProvider {
 
 					Artisan::call('admin:install');
 
-					Redirect::to('admin');
+					return Redirect::to('admin');
 				}
 
 			});

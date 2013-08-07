@@ -41,6 +41,11 @@ class ResourceController extends CrudController
         
         return View::make('admin::resource/import', compact('form', 'model', 'route'));
     }
+
+	public function copy($id)
+	{
+		return View::make('admin::resource/copy', compact('id'));
+	}
     
     /**
      * 
@@ -69,49 +74,54 @@ class ResourceController extends CrudController
         
         // Create pages
         foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
-                        
-            $route = '/' . trim($resource->url, '/');
-            if($action != 'index') {
-                 $route .= sprintf('/{%s}/%s', $var, $action);
-		 $title = $action;
-            }
-	    else {
- 		 $title = Str::plural($resource->title);
-	    }
 
-            
-            $layout = Layout::whereName('admin::layouts.admin')->first();
-            $section = Section::whereName('content')->first();
-            
-            $page = new Page;
-            $page->title = $title;
-            $page->route = $route;
-            $page->layout()->associate($layout);
-//            $page->resource()->associate($resource);
-            $page->save();
-            
-            $block = new Block;
-            $block->title = $page->title;
-            $block->controller = $controller . '@' . $action;
-            $block->save();
-            
-            $content = new Content;
-            $content->page()->associate($page);
-            $content->section_id = 1;
-            $content->block_id = $block->id;
-            if(in_array($action, array('edit', 'update', 'delete'))) {
-                $content->match = array('id' => $var);
-            }
-            $content->save();
-            
+			$route = '/' . trim($resource->url, '/');
+			$title = $action;
+			$match = null;
+			$method = 'get';
+
+			switch($action) {
+
+				case 'index':
+					$title = Str::plural($resource->title);
+					break;
+
+				case 'create':
+					$route .= sprintf('/%s', $action);
+					break;
+
+				case 'store':
+					$method = 'post';
+					$route .= sprintf('/{%s}/%s', $var, $action);
+					break;
+
+				case 'edit':
+					$route .= sprintf('/{%s}/%s', $var, $action);
+					$match = array('id' => $var);
+					break;
+
+				case 'update':
+					$method = 'patch';
+					$route .= sprintf('/{%s}/%s', $var, $action);
+					$match = array('id' => $var);
+					break;
+
+				case 'delete':
+					$method = 'delete';
+					$route .= sprintf('/{%s}/%s', $var, $action);
+					$match = array('id' => $var);
+					break;
+			}
+
+			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $method, 'admin::layouts.admin', 'content', null, $match);
+
             $content = new Content;
             $content->page()->associate($page);
             $content->section_id = 2;
             $content->block_id = 2;
-            $content->params = array('class' => $controller);
+            $content->params = array('id' => $resource->id);
             $content->save();
-            
-            
+
         }
         
     }

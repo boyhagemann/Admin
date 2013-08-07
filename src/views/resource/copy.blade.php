@@ -1,0 +1,1 @@
+<a href="" class="btn btn-default btn-small">Copy to application...</a>
