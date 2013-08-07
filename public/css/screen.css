@@ -1,0 +1,6 @@
+
+
+table.table.table-striped tr td,
+table.table.table-striped tr th {
+	border: none;
+}

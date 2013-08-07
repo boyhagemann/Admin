@@ -16,7 +16,7 @@
 		<!-- CSS
 		================================================== -->
 		<link href="{{{ URL::asset('packages/boyhagemann/admin/css/bootstrap.min.css') }}}" rel="stylesheet">
-		<link href="{{{ URL::asset('css/screen.css') }}}" rel="stylesheet">
+		<link href="{{{ URL::asset('packages/boyhagemann/admin/css/screen.css') }}}" rel="stylesheet">
 
                 
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
