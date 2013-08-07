@@ -20,6 +20,15 @@ use Boyhagemann\Navigation\Model\Node;
 
 class ResourceController extends CrudController
 {
+	/**
+	 * @return array
+	 */
+	public function config()
+	{
+		return array(
+			'title' => 'Resource',
+		);
+	}
 
     public function scan()
     {
