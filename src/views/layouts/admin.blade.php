@@ -29,10 +29,14 @@
 	</head>
 
 	<body>
-            
-            <div class="navbar navbar-static-top">
-                {{ $menu }}
-            </div>
+
+			<div class="navbar navbar-static-top">
+				<div class="container">
+					<div class="row">
+						{{ $menu }}
+					</div>
+				</div>
+			</div>
 
 		<!-- Container -->
 		<div class="container">

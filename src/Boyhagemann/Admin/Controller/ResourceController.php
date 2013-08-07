@@ -123,17 +123,8 @@ class ResourceController extends CrudController
 			}
 
 			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $method, 'admin::layouts.admin', 'content', null, $match);
-
 			$page->resource()->associate($resource);
 			$page->save();
-
-            $content = new Content;
-            $content->page()->associate($page);
-            $content->section_id = 2;
-            $content->block_id = 2;
-            $content->params = array('id' => $resource->id);
-            $content->save();
-
         }
 
     }
