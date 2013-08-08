@@ -19,6 +19,8 @@ class AdminServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+		require_once __DIR__ . '/../../events.php';
+
 		if(Config::get('database.connections.mysql.database') == 'database') {
 			var_dump('No database set'); exit;
 		}
