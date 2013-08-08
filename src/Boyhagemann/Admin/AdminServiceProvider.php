@@ -54,7 +54,8 @@ class AdminServiceProvider extends ServiceProvider {
 
 			});
 
-			Route::when('admin/*', array('installed', 'blocks'));
+			Route::when('admin/*', array('installed'));
+			Route::when('*', array('blocks'));
         }
         
         /**

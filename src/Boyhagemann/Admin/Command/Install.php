@@ -108,6 +108,11 @@ class Install extends Command {
                     'title' => 'Copy resource',
                     'controller' => 'Boyhagemann\Admin\Controller\ResourceController@copy',
                 ));
+				Block::create(array(
+					'id' => 3,
+					'title' => 'Text',
+					'controller' => 'Boyhagemann\Text\Controller\TextController@text',
+				));
                 Content::create(array(
                     'global' => 1,
                     'page_id' => 1,
