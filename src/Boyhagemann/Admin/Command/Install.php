@@ -94,6 +94,12 @@ class Install extends Command {
                     'name' => 'menu',
                     'layout_id' => 1,
                 ));
+				Section::create(array(
+					'id' => 4,
+					'title' => 'Content',
+					'name' => 'content',
+					'layout_id' => 2,
+				));
                 Container::create(array(
                     'title' => 'Admin menu',
                     'name' => 'admin',
@@ -120,7 +126,8 @@ class Install extends Command {
                     'block_id' => 1,
                 ));
 
-				Page::createWithContent('Admin home', '/admin', 'Boyhagemann\Admin\Controller\IndexController@index');
+				Page::createWithContent('Admin home', '/admin', 'Boyhagemann\Admin\Controller\IndexController@index', 'get', 'admin::layouts.admin');
+				Page::createWithContent('Add content', '/admin/pages/{page}/content/create/{block}', 'Boyhagemann\Pages\Controller\PageController@addContent');
 
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
