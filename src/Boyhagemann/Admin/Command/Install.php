@@ -127,7 +127,7 @@ class Install extends Command {
                 ));
 
 				Page::createWithContent('Admin home', '/admin', 'Boyhagemann\Admin\Controller\IndexController@index', 'get', 'admin::layouts.admin');
-				Page::createWithContent('Add content', '/admin/pages/{page}/content/create/{block}', 'Boyhagemann\Pages\Controller\PageController@addContent');
+				Page::createWithContent('Add content', '/admin/pages/{page}/content/create/{block}', 'Boyhagemann\Pages\Controller\PageController@addContent', 'get', 'admin::layouts.admin');
 
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
