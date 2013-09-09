@@ -129,7 +129,7 @@ class ResourceController extends CrudController
 
     }
     
-    public function saveNavigation(Resource $resource) 
+    public function saveNavigation(Resource $resource, Node $baseNode = null)
     {
         $container = Container::whereName('admin')->first();
         $pages = $resource->pages;
@@ -138,12 +138,16 @@ class ResourceController extends CrudController
             
             $node = new Node;
             $node->title = $page->title;
-            $node->route = $page->route;
-            $node->container()->associate($container);            
+			$node->page()->associate($page);
+			$node->container()->associate($container);
             $node->save();
                         
             if(trim($page->route, '/') == $resource->url) {
-                $root = $node;
+				$root = $node;
+
+				if($baseNode) {
+					$root->makeChildOf($baseNode);
+				}
             }
             else {
                 $node->makeChildOf($root);                

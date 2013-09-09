@@ -9,6 +9,7 @@ use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Pages\Model\Block;
 use Boyhagemann\Pages\Model\Content;
 use Boyhagemann\Navigation\Model\Container;
+use Boyhagemann\Navigation\Model\Node;
 use App, Schema;
 
 class Install extends Command {
@@ -101,9 +102,15 @@ class Install extends Command {
 					'layout_id' => 2,
 				));
                 Container::create(array(
+					'id' => 1,
                     'title' => 'Admin menu',
                     'name' => 'admin',
                 ));
+				$contentNode = Node::create(array(
+					'id' => 1,
+					'title' => 'Content',
+					'container_id' => 1
+				));
                 Block::create(array(
                     'id' => 1,
                     'title' => 'Admin menu',
@@ -127,7 +134,16 @@ class Install extends Command {
                 ));
 
 				Page::createWithContent('Admin home', '/admin', 'Boyhagemann\Admin\Controller\IndexController@index', 'get', 'admin::layouts.admin');
+				Page::createWithContent('Page content', '/admin/pages/{page}/content', 'Boyhagemann\Pages\Controller\PageController@content', 'get', 'admin::layouts.admin');
 				Page::createWithContent('Add content', '/admin/pages/{page}/content/create/{block}', 'Boyhagemann\Pages\Controller\PageController@addContent', 'get', 'admin::layouts.admin');
+				$tree = Page::createWithContent('Tree', '/admin/nodes/tree', 'Boyhagemann\Navigation\Controller\NodeController@tree', 'get', 'admin::layouts.admin');
+
+				Node::create(array(
+					'id' => 2,
+					'title' => 'Tree',
+					'container_id' => 1,
+					'page_id' => $tree->id
+				));
 
 		echo 'Registering resources...'.PHP_EOL;
                 $controller->save('Layout', 'admin/layouts', get_class($layout));
@@ -142,7 +158,7 @@ class Install extends Command {
 		echo 'Creating pages and navigation...'.PHP_EOL;
                 foreach(App::make('Boyhagemann\Admin\Model\Resource')->get() as $resource) {
                     $controller->savePages($resource);
-                    $controller->saveNavigation($resource);
+                    $controller->saveNavigation($resource, $contentNode);
                 }
 
 		echo 'Done.'.PHP_EOL;

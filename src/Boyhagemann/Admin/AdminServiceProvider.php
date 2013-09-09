@@ -24,10 +24,11 @@ class AdminServiceProvider extends ServiceProvider {
 		if(Config::get('database.connections.mysql.database') == 'database') {
 			var_dump('No database set'); exit;
 		}
-            $this->package('Boyhagemann\Admin', 'admin');
+
+		$this->package('Boyhagemann\Admin', 'admin');
             
-            $this->app->register('Boyhagemann\Pages\PagesServiceProvider');
-            $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');
+        $this->app->register('Boyhagemann\Pages\PagesServiceProvider');
+        $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');
 	}
 
         public function boot()
