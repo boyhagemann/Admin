@@ -53,6 +53,8 @@
 
 		<!-- Javascripts
 		================================================== -->
+                {{ HTML::script('packages/boyhagemann/admin/js/jquery-2.0.3.min.js') }}
+                {{ HTML::script('packages/boyhagemann/admin/js/bootstrap.min.js') }}
 	</body>
 </html>
 
