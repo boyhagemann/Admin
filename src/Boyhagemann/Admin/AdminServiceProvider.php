@@ -19,54 +19,61 @@ class AdminServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		require_once __DIR__ . '/../../events.php';
-
-		if(Config::get('database.connections.mysql.database') == 'database') {
-			var_dump('No database set'); exit;
-		}
-
-		$this->package('Boyhagemann\Admin', 'admin');
-            
-        $this->app->register('Boyhagemann\Pages\PagesServiceProvider');
-        $this->app->register('Boyhagemann\Navigation\NavigationServiceProvider');
 	}
 
-        public function boot()
-        {
-			Route::get('admin/resources/import/{class}', 'Boyhagemann\Admin\Controller\ResourceController@import')->where('class', '(.*)');
-			Route::get('admin/resources/scan', 'Boyhagemann\Admin\Controller\ResourceController@scan');
+	public function boot()
+	{
+		$this->package('boyhagemann/admin', 'admin');
 
-			if(Schema::hasTable('resources')) {
-				foreach(\Boyhagemann\Admin\Model\Resource::get() as $resource) {
-					Route::resource($resource->url, $resource->controller);
-				}
+		Route::get('admin', array(
+			'uses' => 'Boyhagemann\Admin\Controller\IndexController@dashboard',
+			'as' => 'admin',
+		));
+
+
+		View::composer('admin::layouts.admin', function($layout) {
+
+			$nav = (array) Config::get('admin/navigation.' . Route::currentRouteName());
+			$params = Route::getCurrentRoute()->getParameters();
+
+			if(!isset($nav['left'])) $nav['left'] = array();
+			if(!isset($nav['right'])) $nav['right'] = array();
+
+			foreach($nav['left'] as &$item) {
+
+				if(!isset($item['method'])) $item['method'] = 'get';
+				$item['params'] = $params;
+				$item['form'] = array(
+					'route' => array($item['route']) + $params,
+					'method' => $item['method'],
+				);
 			}
 
+			foreach($nav['right'] as &$item) {
 
-			Route::filter('installed', function() {
+				if(!isset($item['method'])) $item['method'] = 'get';
+				$item['params'] = $params;
+				$item['form'] = array(
+					'route' => array($item['route']) + $params,
+					'method' => $item['method'],
+				);
+			}
 
+			$layout->menuLeft = $nav['left'];
+			$layout->menuRight = $nav['right'];
 
-				if(!Schema::hasTable('resources')) {
+		});
 
-					Artisan::call('admin:install');
-
-					return Redirect::to('admin');
-				}
-
-			});
-
-			Route::when('admin/*', array('installed'));
-			Route::when('*', array('blocks'));
-        }
+	}
         
-        /**
+    /**
 	 * Get the services provided by the provider.
 	 *
 	 * @return array
 	 */
 	public function provides()
 	{
-		return array();
+		return array('admin');
 	}
 
 }
