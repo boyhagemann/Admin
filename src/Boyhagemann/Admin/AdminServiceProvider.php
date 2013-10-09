@@ -19,6 +19,7 @@ class AdminServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+		Config::package('boyhagemann/admin', 'admin');
 	}
 
 	public function boot()
@@ -31,39 +32,36 @@ class AdminServiceProvider extends ServiceProvider {
 		));
 
 
-		View::composer('admin::layouts.admin', function($layout) {
+		$me = $this;
 
-			$nav = (array) Config::get('admin/navigation.' . Route::currentRouteName());
-			$params = Route::getCurrentRoute()->getParameters();
+		View::composer('admin::layouts.admin', function($layout) use($me) {
 
-			if(!isset($nav['left'])) $nav['left'] = array();
-			if(!isset($nav['right'])) $nav['right'] = array();
-
-			foreach($nav['left'] as &$item) {
-
-				if(!isset($item['method'])) $item['method'] = 'get';
-				$item['params'] = $params;
-				$item['form'] = array(
-					'route' => array($item['route']) + $params,
-					'method' => $item['method'],
-				);
-			}
-
-			foreach($nav['right'] as &$item) {
-
-				if(!isset($item['method'])) $item['method'] = 'get';
-				$item['params'] = $params;
-				$item['form'] = array(
-					'route' => array($item['route']) + $params,
-					'method' => $item['method'],
-				);
-			}
-
-			$layout->menuLeft = $nav['left'];
-			$layout->menuRight = $nav['right'];
+			$me->assignNavigation('menuLeft', $layout);
+			$me->assignNavigation('menuRight', $layout);
 
 		});
 
+	}
+
+	public function assignNavigation($name, $layout)
+	{
+		$key = 'admin::navigation.' . Route::currentRouteName();
+		$nav = (array) Config::get($key);
+		$params = Route::getCurrentRoute()->getParameters();
+
+		if(!isset($nav[$name])) $nav[$name] = array();
+
+		foreach($nav[$name] as &$item) {
+
+			if(!isset($item['method'])) $item['method'] = 'get';
+			$item['params'] = $params;
+			$item['form'] = array(
+				'route' => array($item['route']) + $params,
+				'method' => $item['method'],
+			);
+		}
+
+		$layout->$name = $nav[$name];
 	}
         
     /**
