@@ -1,8 +1,8 @@
 
 <ul class="list-group">
-	@foreach($nodes as $node)
+	@foreach($apps as $app)
 	<li class="list-group-item">
-		<a href="{{ URL::route($node['route']) }}">{{{ $node['label'] }}}</a>
+		<a href="{{ URL::route($app['route']) }}">{{{ $app['title'] }}}</a>
 	</li>
 	@endforeach
 </ul>

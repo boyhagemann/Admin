@@ -9,7 +9,7 @@ class IndexController extends \BaseController
 	public function dashboard()
 	{
 		return View::make('admin::dashboard', array(
-			'nodes' => Config::get('admin/dashboard'),
+			'apps' => Config::get('admin::dashboard'),
 		));
 	}
 }
