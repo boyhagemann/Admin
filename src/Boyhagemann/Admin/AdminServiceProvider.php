@@ -34,7 +34,7 @@ class AdminServiceProvider extends ServiceProvider {
 
 		$me = $this;
 
-		View::composer('admin::layouts.admin', function($layout) use($me) {
+		View::composer('*layouts.admin', function($layout) use($me) {
 
 			$me->assignNavigation('menuLeft', $layout);
 			$me->assignNavigation('menuRight', $layout);
