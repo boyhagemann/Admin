@@ -1,6 +1,6 @@
 <?php
 
-namespace Boyhagemann\Admin;
+namespace Boyhagemann\Admin\Controller;
 
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
