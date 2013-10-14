@@ -16,17 +16,9 @@ class Resource extends \Eloquent
     protected $fillable = array(
         'title',
         'url',
-        'controller'
+        'controller',
+        'path'
         );
-
-    /**
-     * @return \Boyhagemann\Pages\Model\Page
-     */
-    public function pages()
-    {
-        return $this->hasMany('Boyhagemann\Pages\Model\Page');
-    }
-
 
 }
 
