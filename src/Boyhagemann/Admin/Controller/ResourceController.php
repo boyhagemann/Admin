@@ -87,7 +87,7 @@ class ResourceController extends CrudController
 //		$line = sprintf(PHP_EOL . 'Route::resource(\'%s\', \'%s\');', $resource->url, $resource->controller);
 //		file_put_contents(app_path() . '/routes.php', $line, FILE_APPEND);
 
-		$this->savePages($resource);
+		Page::createResourcePages($resource->title, $resource->controller, $resource->url);
 	}
 
 //    public function scan()
@@ -131,64 +131,7 @@ class ResourceController extends CrudController
 //        $resource->save();
 //    }
 
-    /**
-     *
-     * @param \Boyhagemann\Admin\Model\Resource $resource
-     */
-    public function savePages(Resource $resource)
-    {
-        $controller = $resource->controller;
-        $title = $resource->title;
 
-        // Create pages
-        foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
-
-			$route = '/' . trim($resource->url, '/');
-			$alias = str_replace('/', '.', trim($resource->url, '/')) . '.' . $action;
-			$title = $action;
-			$match = null;
-			$method = 'get';
-
-			switch($action) {
-
-				case 'index':
-					$title = Str::plural($resource->title);
-					break;
-
-				case 'create':
-					$route .= sprintf('/%s', $action);
-					break;
-
-				case 'store':
-					$method = 'post';
-					$route .= sprintf('/{id}/%s', $action);
-					break;
-
-				case 'edit':
-					$route .= sprintf('/{id}/%s', $action);
-					break;
-
-				case 'update':
-					$method = 'patch';
-					$route .= sprintf('/{id}/%s', $action);
-					break;
-
-				case 'delete':
-					$method = 'delete';
-					$route .= sprintf('/{id}/%s', $action);
-					break;
-			}
-
-			$layout = 'admin::layouts.admin';
-			$zone = 'content';
-
-			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $layout, $zone, $method, $alias);
-//			$page->resource()->associate($resource);
-			$page->save();
-        }
-
-    }
-//
 //    public function saveNavigation(Resource $resource, Node $baseNode = null)
 //    {
 //        $container = Container::whereName('admin')->first();
