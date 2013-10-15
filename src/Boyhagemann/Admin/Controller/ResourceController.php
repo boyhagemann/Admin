@@ -10,7 +10,7 @@ use Route, View, Input, App, Str;
 
 //use Boyhagemann\Pages\Model\Layout;
 //use Boyhagemann\Pages\Model\Section;
-//use Boyhagemann\Pages\Model\Page;
+use Boyhagemann\Pages\Model\Page;
 //use Boyhagemann\Pages\Model\Block;
 //use Boyhagemann\Pages\Model\Content;
 use Boyhagemann\Admin\Model\Resource;
@@ -84,9 +84,10 @@ class ResourceController extends CrudController
 		file_put_contents($filename, $generator->generate());
 
 		// Add resource route to routes.php
-		$line = sprintf(PHP_EOL . 'Route::resource(\'%s\', \'%s\');', $resource->url, $resource->controller);
-		file_put_contents(app_path() . '/routes.php', $line, FILE_APPEND);
+//		$line = sprintf(PHP_EOL . 'Route::resource(\'%s\', \'%s\');', $resource->url, $resource->controller);
+//		file_put_contents(app_path() . '/routes.php', $line, FILE_APPEND);
 
+		$this->savePages($resource);
 	}
 
 //    public function scan()
@@ -129,64 +130,64 @@ class ResourceController extends CrudController
 //        $this->prepare($resource);
 //        $resource->save();
 //    }
-//
-//    /**
-//     *
-//     * @param \Boyhagemann\Admin\Model\Resource $resource
-//     */
-//    public function savePages(Resource $resource)
-//    {
-//        $controller = $resource->controller;
-//        $title = $resource->title;
-//        $var = substr($resource->url, strrpos($resource->url, '/') + 1);
-//
-//        // Create pages
-//        foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
-//
-//			$route = '/' . trim($resource->url, '/');
-//			$title = $action;
-//			$match = null;
-//			$method = 'get';
-//
-//			switch($action) {
-//
-//				case 'index':
-//					$title = Str::plural($resource->title);
-//					break;
-//
-//				case 'create':
-//					$route .= sprintf('/%s', $action);
-//					break;
-//
-//				case 'store':
-//					$method = 'post';
-//					$route .= sprintf('/{%s}/%s', $var, $action);
-//					break;
-//
-//				case 'edit':
-//					$route .= sprintf('/{%s}/%s', $var, $action);
-//					$match = array('id' => $var);
-//					break;
-//
-//				case 'update':
-//					$method = 'patch';
-//					$route .= sprintf('/{%s}/%s', $var, $action);
-//					$match = array('id' => $var);
-//					break;
-//
-//				case 'delete':
-//					$method = 'delete';
-//					$route .= sprintf('/{%s}/%s', $var, $action);
-//					$match = array('id' => $var);
-//					break;
-//			}
-//
-//			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $method, 'admin::layouts.admin', 'content', null, $match);
+
+    /**
+     *
+     * @param \Boyhagemann\Admin\Model\Resource $resource
+     */
+    public function savePages(Resource $resource)
+    {
+        $controller = $resource->controller;
+        $title = $resource->title;
+
+        // Create pages
+        foreach(array('index', 'create', 'store', 'edit', 'update', 'delete') as $action) {
+
+			$route = '/' . trim($resource->url, '/');
+			$alias = str_replace('/', '.', trim($resource->url, '/')) . '.' . $action;
+			$title = $action;
+			$match = null;
+			$method = 'get';
+
+			switch($action) {
+
+				case 'index':
+					$title = Str::plural($resource->title);
+					break;
+
+				case 'create':
+					$route .= sprintf('/%s', $action);
+					break;
+
+				case 'store':
+					$method = 'post';
+					$route .= sprintf('/{id}/%s', $action);
+					break;
+
+				case 'edit':
+					$route .= sprintf('/{id}/%s', $action);
+					break;
+
+				case 'update':
+					$method = 'patch';
+					$route .= sprintf('/{id}/%s', $action);
+					break;
+
+				case 'delete':
+					$method = 'delete';
+					$route .= sprintf('/{id}/%s', $action);
+					break;
+			}
+
+			$layout = 'admin::layouts.admin';
+			$zone = 'content';
+
+			$page = Page::createWithContent($title, $route, $controller . '@' . $action, $layout, $zone, $method, $alias);
 //			$page->resource()->associate($resource);
-//			$page->save();
-//        }
-//
-//    }
+			$page->save();
+        }
+
+    }
 //
 //    public function saveNavigation(Resource $resource, Node $baseNode = null)
 //    {
