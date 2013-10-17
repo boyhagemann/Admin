@@ -6,17 +6,12 @@ use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
-use Route, View, Input, App, Str;
+use Route, View, Input, App, Str, Artisan;
 
-//use Boyhagemann\Pages\Model\Layout;
-//use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Pages\Model\Page;
-//use Boyhagemann\Pages\Model\Block;
-//use Boyhagemann\Pages\Model\Content;
 use Boyhagemann\Admin\Model\Resource;
+use Boyhagemann\Admin\Model\App as AdminApp;
 
-//use Boyhagemann\Navigation\Model\Container;
-//use Boyhagemann\Navigation\Model\Node;
 
 class ResourceController extends CrudController
 {
@@ -40,6 +35,10 @@ class ResourceController extends CrudController
 			->value('../app/controllers')
 			->help('This is the folder where the controller is being generated in. It defaults to
 					the application controllers folder');
+
+		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(array(1));
+		$fb->checkbox('create_front')->label('Create front end pages?')->useModel(false);
+		$fb->checkbox('create_app')->label('Create app?')->useModel(false);
 	}
 
 	/**
@@ -72,7 +71,30 @@ class ResourceController extends CrudController
 	/**
 	 * @param Resource $resource
 	 */
-	public function onCreate(Resource $resource)
+	public function onSaved(Resource $resource, Array $input)
+	{
+		if(isset($input['create_admin'])) {
+			$pages = $this->generateAdmin($resource);
+		}
+
+		if(isset($input['create_app'])) {
+			AdminApp::create(array(
+				'title' => $resource->title,
+				'route' => $pages['index']->alias,
+				'icon_class' => 'icon-file',
+			));
+		}
+
+		if(isset($input['create_front'])) {
+			$pages = $this->generateFront($resource);
+		}
+	}
+
+	/**
+	 * @param Resource $resource
+	 * @return array
+	 */
+	protected function generateAdmin(Resource $resource)
 	{
 		$generator = App::make('Boyhagemann\Crud\ControllerGenerator');
 		$generator->setClassName(str_replace(' ', '', $resource->title));
@@ -83,93 +105,35 @@ class ResourceController extends CrudController
 		@mkdir(dirname($filename), 0755, true);
 		file_put_contents($filename, $generator->generate());
 
-		// Add resource route to routes.php
-//		$line = sprintf(PHP_EOL . 'Route::resource(\'%s\', \'%s\');', $resource->url, $resource->controller);
-//		file_put_contents(app_path() . '/routes.php', $line, FILE_APPEND);
-
-		Page::createResourcePages($resource->title, $resource->controller, $resource->url);
+		return Page::createResourcePages($resource->title, $resource->controller, $resource->url);
 	}
 
-//    public function scan()
-//    {
-//        $scanner = new \Boyhagemann\Crud\Scanner;
-//        $controllers = $scanner->scanForControllers(array('../app/controllers', '../workbench', '../vendor'));
-//
-//        return View::make('admin::resource/scan', compact('controllers'));
-//    }
-//
-//    public function import($class)
-//    {
-//        $controller = $this->getController($class);
-//        $this->formBuilder->get('title')->value($controller->getModelBuilder()->getName());
-//        $this->formBuilder->get('controller')->value(get_class($controller));
-//
-//        $form = $this->getForm();
-//        $model = $this->getModel();
-//        $route = 'admin.resources';
-//
-//        return View::make('admin::resource/import', compact('form', 'model', 'route'));
-//    }
-//
-//	public function copy($id)
-//	{
-//		return View::make('admin::resource/copy', compact('id'));
-//	}
-//
-//    /**
-//     *
-//     * @param type $title
-//     * @param type $url
-//     * @param type $controller
-//     */
-//    public function save($title, $url, $controller)
-//    {
-//        // Add it to the database
-//        Input::replace(compact('title', 'url', 'controller'));
-//        $resource = $this->getModel();
-//        $this->prepare($resource);
-//        $resource->save();
-//    }
+	/**
+	 * @param Resource $resource
+	 * @return array
+	 */
+	protected function generateFront(Resource $resource)
+	{
+		$controller = Str::studly($resource->title) . 'Controller';
+		$layout = 'layouts.default';
 
+		Artisan::call('controller:make', array(
+			'name' => $controller,
+			'--only' => 'index,show'
+		));
 
-//    public function saveNavigation(Resource $resource, Node $baseNode = null)
-//    {
-//        $container = Container::whereName('admin')->first();
-//        $pages = $resource->pages;
-//
-//        foreach($pages as $page) {
-//
-//            $node = new Node;
-//            $node->title = $page->title;
-//			$node->page()->associate($page);
-//			$node->container()->associate($container);
-//            $node->save();
-//
-//            if(trim($page->route, '/') == $resource->url) {
-//				$root = $node;
-//
-//				if($baseNode) {
-//					$root->makeChildOf($baseNode);
-//				}
-//            }
-//            else {
-//                $node->makeChildOf($root);
-//            }
-//        }
-//
-//    }
-//
-//
-//    /**
-//     *
-//     * @param string $key
-//     * @return CrudController
-//     */
-//    protected function getController($key)
-//    {
-//        $class = str_replace('/', '\\', $key);
-//        return \App::make($class);
-//    }
+		$urlIndex = str_replace('admin/', '', $resource->url);
+		$aliasIndex = str_replace('admin.', '', $resource->alias);
+
+		$urlShow = $urlIndex . '/{id}';
+		$aliasShow = $urlIndex . 'show';
+
+		$zone = 'content';
+		$method = 'get';
+
+		Page::createWithContent($resource->title, $urlIndex, $controller, $layout, $zone, $method, $aliasIndex);
+		Page::createWithContent($resource->title, $urlShow, $controller, $layout, $zone, $method, $aliasShow);
+	}
 
 }
 
