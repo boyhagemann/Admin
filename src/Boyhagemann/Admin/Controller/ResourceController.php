@@ -20,23 +20,12 @@ class ResourceController extends CrudController
 	 */
 	public function buildForm(FormBuilder $fb)
 	{
-		$fb->text('title')
-		   ->label('Title');
+		$fb->text('title')->label('Title');
+		$fb->hidden('controller')->rules('unique:resources');
+		$fb->hidden('url');
+		$fb->hidden('path');
 
-		$fb->text('controller')
-			->label('Controller');
-
-		$fb->text('url')
-			->label('Url to the resource overview')
-			->placeholder('What should be the url pointing to your resource? An example would be \'admin/news\'.');
-
-		$fb->text('path')
-			->label('Path')
-			->value('../app/controllers')
-			->help('This is the folder where the controller is being generated in. It defaults to
-					the application controllers folder');
-
-		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(array(1));
+		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(1);
 		$fb->checkbox('create_front')->label('Create front end pages?')->useModel(false);
 		$fb->checkbox('create_app')->label('Create app?')->useModel(false);
 	}
@@ -47,7 +36,6 @@ class ResourceController extends CrudController
 	public function buildModel(ModelBuilder $mb)
 	{
 		$mb->name('Boyhagemann\Admin\Model\Resource')->table('resources');
-		$mb->autoGenerate();
 	}
 
 	/**
@@ -71,21 +59,44 @@ class ResourceController extends CrudController
 	/**
 	 * @param Resource $resource
 	 */
-	public function onSaved(Resource $resource, Array $input)
+	public function onCreate(Resource $resource)
 	{
-		if(isset($input['create_admin'])) {
+		$title = Input::get('title');
+
+		Input::merge(array(
+			'controller' => 'Admin\\' . Str::studly($title) . 'Controller',
+			'url' => 'admin/' . Str::slug($title),
+			'path' => '../app/controllers',
+		));
+
+	}
+
+	public function onUpdate(Resource $resource)
+	{
+		$resource->rules['controller'] .= ',' . $resource->id;
+	}
+
+	/**
+	 * @param Resource $resource
+	 */
+	public function onSaved(Resource $resource)
+	{
+		if(Input::get('create_admin')) {
 			$pages = $this->generateAdmin($resource);
 		}
 
-		if(isset($input['create_app'])) {
-			AdminApp::create(array(
-				'title' => $resource->title,
-				'route' => $pages['index']->alias,
-				'icon_class' => 'icon-file',
-			));
+		if(Input::get('create_app')) {
+			$alias = $pages['index']->alias;
+			if(!AdminApp::whereRoute($alias)->first()) {
+				AdminApp::create(array(
+					'title' => $resource->title,
+					'route' => $alias,
+					'icon_class' => 'icon-file',
+				));
+			}
 		}
 
-		if(isset($input['create_front'])) {
+		if(Input::get('create_front')) {
 			$pages = $this->generateFront($resource);
 		}
 	}
@@ -98,6 +109,7 @@ class ResourceController extends CrudController
 	{
 		$generator = App::make('Boyhagemann\Crud\ControllerGenerator');
 		$generator->setClassName(str_replace(' ', '', $resource->title));
+		$generator->setNamespace('Admin');
 
 		$filename = $resource->path . '/' . str_replace('\\', '/', $resource->controller) . '.php';
 

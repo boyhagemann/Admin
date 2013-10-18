@@ -9,7 +9,9 @@ class Resource extends \Eloquent
 
     public $timestamps = false;
 
-    public $rules = array();
+    public $rules = array(
+		'controller' => 'unique:resources,controller'
+	);
 
     protected $guarded = array('id');
 
