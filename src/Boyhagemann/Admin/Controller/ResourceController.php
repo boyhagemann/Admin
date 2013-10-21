@@ -143,8 +143,8 @@ class ResourceController extends CrudController
 		$zone = 'content';
 		$method = 'get';
 
-		Page::createWithContent($resource->title, $urlIndex, $controller, $layout, $zone, $method, $aliasIndex);
-		Page::createWithContent($resource->title, $urlShow, $controller, $layout, $zone, $method, $aliasShow);
+		Page::createWithContent($resource->title, $urlIndex, $controller . '@index', $layout, $zone, $method, $aliasIndex);
+		Page::createWithContent($resource->title, $urlShow, $controller . '@show', $layout, $zone, $method, $aliasShow);
 	}
 
 }
