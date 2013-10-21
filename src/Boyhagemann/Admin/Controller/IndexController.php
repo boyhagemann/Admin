@@ -2,15 +2,16 @@
 
 namespace Boyhagemann\Admin\Controller;
 
-use View, Config;
+use Boyhagemann\Admin\Model\App as AdminApp;
+use View;
 
 class IndexController extends \BaseController
 {
-	public function dashboard()
-	{
-		return View::make('admin::index.dashboard', array(
-			'apps' => (array) Config::get('admin::dashboard'),
-		));
-	}
+    public function dashboard()
+    {  
+        return View::make('admin::index.dashboard', array(
+                'apps' => AdminApp::all()
+        ));
+    }
 }
 
