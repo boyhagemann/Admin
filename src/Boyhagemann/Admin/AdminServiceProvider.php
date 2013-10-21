@@ -26,10 +26,10 @@ class AdminServiceProvider extends ServiceProvider {
 	{
 		$this->package('boyhagemann/admin', 'admin');
 
-		Route::get('admin', array(
-			'uses' => 'Boyhagemann\Admin\Controller\IndexController@dashboard',
-			'as' => 'admin',
-		));
+//		Route::get('admin', array(
+//			'uses' => 'Boyhagemann\Admin\Controller\IndexController@dashboard',
+//			'as' => 'admin',
+//		));
 
 
 		$me = $this;
