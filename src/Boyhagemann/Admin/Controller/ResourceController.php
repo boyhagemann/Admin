@@ -25,7 +25,7 @@ class ResourceController extends CrudController
 		$fb->hidden('url');
 		$fb->hidden('path');
 
-		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(1);
+		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(array(1));
 		$fb->checkbox('create_front')->label('Create front end pages?')->useModel(false);
 		$fb->checkbox('create_app')->label('Create app?')->useModel(false);
 	}
