@@ -7,7 +7,7 @@ use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
 
-class AppController extends CrudController
+class DashboardController extends CrudController
 {
     /**
      * @param FormBuilder $fb
@@ -15,7 +15,8 @@ class AppController extends CrudController
     public function buildForm(FormBuilder $fb)
     {
 		$fb->text('title')->label('Title');
-		$fb->text('route')->label('Route');
+		$fb->modelSelect('page_id')->model('Boyhagemann\Pages\Model\Page')->label('Page');
+		$fb->modelSelect('container_id')->model('Boyhagemann\Navigation\Model\Container')->label('Navigation container');
 		$fb->text('icon_class')->label('Icon class');
     }
 
@@ -24,7 +25,7 @@ class AppController extends CrudController
      */
     public function buildModel(ModelBuilder $mb)
     {
-        $mb->name('Boyhagemann\Admin\Model\App')->table('admin_apps');
+        $mb->name('Boyhagemann\Admin\Model\Node')->table('navigation_nodes');
     }
 
     /**
