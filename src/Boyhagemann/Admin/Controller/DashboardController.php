@@ -6,6 +6,7 @@ use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
+use Boyhagemann\Navigation\Model\Container;
 
 class DashboardController extends CrudController
 {
@@ -16,7 +17,7 @@ class DashboardController extends CrudController
     {
 		$fb->text('title')->label('Title');
 		$fb->modelSelect('page_id')->model('Boyhagemann\Pages\Model\Page')->label('Page');
-		$fb->modelSelect('container_id')->model('Boyhagemann\Navigation\Model\Container')->label('Navigation container');
+		$fb->hidden('container_id')->value($this->getContainer()->id);
 		$fb->text('icon_class')->label('Icon class');
     }
 
@@ -25,7 +26,7 @@ class DashboardController extends CrudController
      */
     public function buildModel(ModelBuilder $mb)
     {
-        $mb->name('Boyhagemann\Admin\Model\Node')->table('navigation_nodes');
+        $mb->name('Boyhagemann\Navigation\Model\Node')->table('navigation_nodes');
     }
 
     /**
@@ -33,7 +34,16 @@ class DashboardController extends CrudController
      */
     public function buildOverview(OverviewBuilder $ob)
     {
+		$ob->getQueryBuilder()->whereContainerId($this->getContainer()->id);
     }
+
+	/**
+	 * @return Container
+	 */
+	public function getContainer()
+	{
+		return Container::whereName('dashboard')->first();
+	}
 
 }
 
