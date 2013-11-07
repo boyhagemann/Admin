@@ -17,7 +17,6 @@ class Resource extends \Eloquent
 
     protected $fillable = array(
         'title',
-        'url',
         'controller',
         'path'
         );
