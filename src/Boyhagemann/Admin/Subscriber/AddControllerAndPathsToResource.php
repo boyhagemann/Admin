@@ -2,10 +2,12 @@
 
 namespace Boyhagemann\Admin\Subscriber;
 
+use Boyhagemann\Admin\Controller\ResourceController;
 use Illuminate\Events\Dispatcher as Events;
 use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
+use Str;
 
 class AddControllerAndPathsToResource
 {

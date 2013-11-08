@@ -2,12 +2,15 @@
 
 namespace Boyhagemann\Admin\Subscriber;
 
+use Boyhagemann\Admin\Controller\ResourceController;
+use Boyhagemann\Admin\Model\ResourceRepository;
 use Illuminate\Events\Dispatcher as Events;
 use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
-use Boyhagemann\Pages\Model\Page;
-use Input, App;
+use Boyhagemann\Pages\Model\PageRepository;
+use DeSmart\ResponseException\Exception as ResponseException;
+use Input, App, Redirect, Route;
 
 class AddGenerateAdminHookToResource
 {
@@ -52,7 +55,10 @@ class AddGenerateAdminHookToResource
 		file_put_contents($filename, $generator->generate());
 
 		// Create the resource pages
-		Page::createResourcePages($model->title, $model->controller);
+		$pages = PageRepository::createResourcePages($model->title, $model->controller);
+
+		// Redirect to the newly created resource
+		ResponseException::chain(Redirect::route($pages['create']['alias']))->fire();
 	}
 
 	/**

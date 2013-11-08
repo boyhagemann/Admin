@@ -25,37 +25,6 @@ class AdminServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('boyhagemann/admin', 'admin');
-
-		$me = $this;
-
-		View::composer('*layouts.admin', function($layout) use($me) {
-
-			$me->assignNavigation('menuLeft', $layout);
-			$me->assignNavigation('menuRight', $layout);
-
-		});
-
-	}
-
-	public function assignNavigation($name, $layout)
-	{
-		$key = 'admin::navigation.' . Route::currentRouteName();
-		$nav = (array) Config::get($key);
-		$params = Route::getCurrentRoute()->getParameters();
-
-		if(!isset($nav[$name])) $nav[$name] = array();
-
-		foreach($nav[$name] as &$item) {
-
-			if(!isset($item['method'])) $item['method'] = 'get';
-			$item['params'] = $params;
-			$item['form'] = array(
-				'route' => array($item['route']) + $params,
-				'method' => $item['method'],
-			);
-		}
-
-		$layout->$name = $nav[$name];
 	}
         
     /**
