@@ -3,12 +3,13 @@
 namespace Boyhagemann\Admin\Subscriber;
 
 use Boyhagemann\Admin\Controller\ResourceController;
+use Boyhagemann\Pages\Model\PageRepository;
+use Boyhagemann\Content\Model\Block;
 use Illuminate\Events\Dispatcher as Events;
 use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
-use Boyhagemann\Pages\Model\Page;
-use Input, Artisan;
+use Input, Artisan, Str;
 
 class AddGenerateFrontHookToResource
 {
@@ -51,8 +52,8 @@ class AddGenerateFrontHookToResource
 			'--only' => 'index,show'
 		));
 
-		$urlIndex = str_replace('admin/', '', $model->url);
-		$aliasIndex = str_replace('admin.', '', $model->alias);
+		$urlIndex = Str::slug($model->title);
+		$aliasIndex = str_replace('.', '', $urlIndex);
 
 		$urlShow = $urlIndex . '/{id}';
 		$aliasShow = $urlIndex . 'show';
@@ -60,9 +61,19 @@ class AddGenerateFrontHookToResource
 		$zone = 'content';
 		$method = 'get';
 
-		Page::createWithContent($model->title, $urlIndex, $controller . '@index', $layout, $zone, $method, $aliasIndex);
-		Page::createWithContent($model->title, $urlShow, $controller . '@show', $layout, $zone, $method, $aliasShow);
 
+		PageRepository::createWithContent($model->title, $urlIndex, $controller . '@index', $layout, $method, $aliasIndex);
+		PageRepository::createWithContent($model->title, $urlShow, $controller . '@show', $layout, $method, $aliasShow);
+
+		Block::create(array(
+			'title' => sprintf('List %s items', $model->title),
+			'controller' => $controller . '@index',
+		));
+
+		Block::create(array(
+			'title' => sprintf('Show %s', $model->title),
+			'controller' => $controller . '@show',
+		));
 	}
 
 	/**
