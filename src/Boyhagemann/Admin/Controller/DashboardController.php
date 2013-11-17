@@ -16,6 +16,7 @@ class DashboardController extends CrudController
     public function buildForm(FormBuilder $fb)
     {
 		$fb->text('title')->label('Title');
+		$fb->textarea('description')->label('Description')->rows(3);
 		$fb->modelSelect('page_id')->model('Boyhagemann\Pages\Model\Page')->label('Page');
 		$fb->hidden('container_id')->value($this->getContainer()->id);
 		$fb->text('icon_class')->label('Icon class');
