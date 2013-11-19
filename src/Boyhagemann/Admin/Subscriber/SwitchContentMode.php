@@ -14,6 +14,9 @@ class SwitchContentMode
 	 */
 	public function subscribe(Events $events)
 	{
+		if(Request::ajax()) {
+			return;
+		}
 
 		Route::before(function() {
 
