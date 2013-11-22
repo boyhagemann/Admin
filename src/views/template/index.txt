@@ -1,0 +1,7 @@
+<h1>{model} index</h1>
+
+@foreach($collection as ${model})
+	<div class="row">
+		<h2><a href="{{ URL::route('{route}', $article->id) }}">{{ ${model}->id }} - {{ ${model}->title }}</a></h2>
+	</div>
+@endforeach

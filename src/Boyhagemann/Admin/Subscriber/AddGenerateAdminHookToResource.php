@@ -22,7 +22,7 @@ class AddGenerateAdminHookToResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
-		$events->listen('formBuilder.build.post', array($this, 'onBuildForm'));
+		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**
@@ -70,6 +70,12 @@ class AddGenerateAdminHookToResource
 			return;
 		}
 
-		$fb->checkbox('create_admin')->label('Create admin pages?')->useModel(false)->value(array(1));
+		$fb->checkbox('create_admin')
+			->choices(array(1 => 'Create admin pages'))
+			->map(false)
+			->value(array(1))
+			->help('This will generate the admin controller and route to manage your resource.
+					This is the place where you can add form elements for the resource.
+					When checked, you will be redirected to your resource page after saving.');
 	}
 }

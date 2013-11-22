@@ -19,7 +19,7 @@ class AddControllerAndPathsToResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
-		$events->listen('formBuilder.build.post', array($this, 'onBuildForm'));
+		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**

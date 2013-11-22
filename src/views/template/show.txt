@@ -1,0 +1,5 @@
+Show {model} with ID {{ ${model}->id }}
+
+<h1>{{ ${model}->title }}</h1>
+
+<a href="{{ URL::route('{route}') }}">To {model} list</a>
