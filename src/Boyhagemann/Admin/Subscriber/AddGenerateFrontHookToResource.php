@@ -67,6 +67,7 @@ class AddGenerateFrontHookToResource
 		$controller = Str::studly($model->title) . 'Controller';
 
 		$template = file_get_contents(__DIR__ . '/../../../views/template/controller.txt');
+		$template = str_replace('{controller}', Str::studly($model->title) . 'Controller', $template);
 		$template = str_replace('{repositoryClass}', Str::studly($model->title . 'Repository'), $template);
 		$template = str_replace('{model}', lcfirst(Str::studly($model->title)), $template);
 		$template = str_replace('{viewIndex}', Str::slug($model->title) . '.index', $template);

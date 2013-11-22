@@ -10,7 +10,7 @@ use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Form\FormBuilder;
 use Boyhagemann\Pages\Model\PageRepository;
 use DeSmart\ResponseException\Exception as ResponseException;
-use Input, App, Redirect, Route;
+use Input, App, Redirect, Route, Event;
 
 class AddGenerateAdminHookToResource
 {
@@ -22,7 +22,7 @@ class AddGenerateAdminHookToResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
-		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
+//		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**
@@ -38,9 +38,9 @@ class AddGenerateAdminHookToResource
 
 		// When the form is posted, we need this field.
 		// If it is not checked, then we don't have to do anything.
-		if(!Input::get('create_admin')) {
-			return;
-		}
+//		if(!Input::get('create_admin')) {
+//			return;
+//		}
 
 		// Start up the generator
 		$generator = App::make('Boyhagemann\Crud\ControllerGenerator');
@@ -57,8 +57,14 @@ class AddGenerateAdminHookToResource
 		// Create the resource pages
 		$pages = PageRepository::createResourcePages($model->title, $model->controller);
 
+		// Get the newly create controller and get the modelBuilder
+		// We need to trigger the model generate event so that the model is
+		// actually generated
+		$crud = App::make($model->controller);
+		Event::fire('model.builder.generate', $crud->init('create')->getModelBuilder());
+
 		// Redirect to the newly created resource
-		ResponseException::chain(Redirect::route($pages['create']['alias']))->fire();
+//		ResponseException::chain(Redirect::route($pages['create']['alias']))->fire();
 	}
 
 	/**
