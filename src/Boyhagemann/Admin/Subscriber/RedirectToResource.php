@@ -3,9 +3,11 @@
 namespace Boyhagemann\Admin\Subscriber;
 
 use Illuminate\Events\Dispatcher as Events;
-use Boyhagemann\Admin\Model\Resource;
+use Illuminate\Database\Eloquent\Model;
+use Boyhagemann\Crud\CrudController;
+use Boyhagemann\Admin\Controller\ResourceController;
 use DeSmart\ResponseException\Exception as ResponseException;
-use Redirect, Route;
+use Redirect;
 
 class RedirectToResource
 {
@@ -16,23 +18,23 @@ class RedirectToResource
 	 */
 	public function subscribe(Events $events)
 	{
-		$events->listen('admin.model.resourceRepository.createWithPages', array($this, 'onCreatedResourcePages'));
+		$events->listen('crud::saved', array($this, 'onSaved'));
 	}
 
 	/**
-	 * @param Resource $resource
-	 * @param array    $pages
+	 * @param Model          $model
+	 * @param CrudController $controller
 	 */
-	public function onCreatedResourcePages(Resource $resource, Array $pages)
+	public function onSaved(Model $model, CrudController $controller)
 	{
-		// Don't use this in an artisan command
-		if(!Route::getCurrentRoute()) {
+		// We are only interested in a resource controller
+		if(!$controller instanceof ResourceController) {
 			return;
 		}
 
-		\dd('test');
-
-		ResponseException::chain(Redirect::route($pages['create']['alias']))->fire();
+		// Redirect to the newly created resource
+		$route = $controller->getBaseRoute() . '.create';
+		ResponseException::chain(Redirect::route($route))->fire();
 	}
 
 }

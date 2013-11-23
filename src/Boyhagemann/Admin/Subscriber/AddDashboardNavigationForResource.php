@@ -23,7 +23,6 @@ class AddDashboardNavigationForResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
-		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**
@@ -37,12 +36,7 @@ class AddDashboardNavigationForResource
 			return;
 		}
 
-		// When the form is posted, we need this field.
-		// If it is not checked, then we don't have to do anything.
-//		if(!Input::get('create_admin')) {
-//			return;
-//		}
-
+        // Add a dashboard app pointing to the 'create' route of this resource
 		Node::create(array(
 			'title' => sprintf('Create %s', Str::lower($model->title)),
 			'description' => Input::get('description'),
@@ -51,21 +45,6 @@ class AddDashboardNavigationForResource
 			'container_id' => NavigationContainersTableSeeder::DASHBOARD,
 		));
 
-	}
-
-	/**
-	 * @param FormBuilder $fb
-	 */
-	public function onBuildForm(FormBuilder $fb)
-	{
-		if($fb->getName() != 'Boyhagemann\Admin\Controller\ResourceController') {
-			return;
-		}
-
-		$fb->textarea('description')
-			->label('Description')
-			->rows(3)
-			->help('This will be presented in the admin dashboard to help you explain what this resource is about.');
 	}
 
 }

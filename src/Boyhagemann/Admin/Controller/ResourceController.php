@@ -20,7 +20,16 @@ class ResourceController extends CrudController
 	 */
 	public function buildForm(FormBuilder $fb)
 	{
-		$fb->text('title')->label('Title');
+		$fb->text('title')
+           ->label('Title')
+           ->help('What is the name of the resource? Examples are: "Article", "Category". For good semantics, please use a singular form.')
+           ->required();
+        
+		$fb->textarea('description')
+           ->label('Description')
+           ->help('Give a description of this resource. This will be used to help other users understand what this resource is about.')
+           ->rows(3);
+        
 		$fb->text('controller')->rules('unique:resources');
 		$fb->text('path');
 	}
