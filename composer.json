@@ -11,7 +11,8 @@
         "php": ">=5.3.0",
         "illuminate/support": "4.0.x",
 		"boyhagemann/crud": "dev-master",
-		"boyhagemann/navigation": "dev-master"
+		"boyhagemann/navigation": "dev-master",
+		"boyhagemann/user": "dev-master"
     },
     "autoload": {
         "psr-0": {
