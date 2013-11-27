@@ -29,7 +29,7 @@ class ResourceController extends CrudController
            ->label('Description')
            ->help('Give a description of this resource. This will be used to help other users understand what this resource is about.')
            ->rows(3);
-        
+
 		$fb->text('controller')->rules('unique:resources');
 		$fb->text('path');
 	}

@@ -22,7 +22,6 @@ class AddGenerateAdminHookToResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
-//		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**
@@ -35,12 +34,6 @@ class AddGenerateAdminHookToResource
 		if(!$controller instanceof ResourceController) {
 			return;
 		}
-
-		// When the form is posted, we need this field.
-		// If it is not checked, then we don't have to do anything.
-//		if(!Input::get('create_admin')) {
-//			return;
-//		}
 
 		// Start up the generator
 		$generator = App::make('Boyhagemann\Crud\ControllerGenerator');
@@ -63,25 +56,5 @@ class AddGenerateAdminHookToResource
 		$crud = App::make($model->controller);
 		Event::fire('model.builder.generate', $crud->init('create')->getModelBuilder());
 
-		// Redirect to the newly created resource
-//		ResponseException::chain(Redirect::route($pages['create']['alias']))->fire();
-	}
-
-	/**
-	 * @param FormBuilder $fb
-	 */
-	public function onBuildForm(FormBuilder $fb)
-	{
-		if($fb->getName() != 'Boyhagemann\Admin\Controller\ResourceController') {
-			return;
-		}
-
-		$fb->checkbox('create_admin')
-			->choices(array(1 => 'Create admin pages'))
-			->map(false)
-			->value(array(1))
-			->help('This will generate the admin controller and route to manage your resource.
-					This is the place where you can add form elements for the resource.
-					When checked, you will be redirected to your resource page after saving.');
 	}
 }

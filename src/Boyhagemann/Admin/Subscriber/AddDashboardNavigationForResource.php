@@ -5,13 +5,10 @@ namespace Boyhagemann\Admin\Subscriber;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Admin\Controller\ResourceController;
 use Illuminate\Events\Dispatcher as Events;
-use Illuminate\Database\Eloquent\Model;
-use Boyhagemann\Form\FormBuilder;
-use Boyhagemann\Form\Element;
 use Boyhagemann\Navigation\Model\Node;
 use Boyhagemann\Pages\Model\Page;
 use NavigationContainersTableSeeder;
-use Input, App, Str;
+use Input, Str;
 
 class AddDashboardNavigationForResource
 {
