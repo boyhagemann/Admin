@@ -21,7 +21,7 @@ class ResourceRepository
 			$title = $resource->title;
 		}
 
-		$pages = PageRepository::createResourcePages($title, $resource->controller, null, null, $color);
+		$pages = PageRepository::createResourcePages($title, $resource->controller, null, 'layouts.admin', $color);
 
 		Event::fire('admin.model.resourceRepository.createWithPages', array($resource, $pages));
 
