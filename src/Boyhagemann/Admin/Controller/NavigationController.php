@@ -10,8 +10,11 @@ class NavigationController extends \BaseController
 {
 	public function dashboard()
 	{
-		$nodes = Node::getChildrenByContainer('dashboard');
-
+		$q = Node::getChildrenByContainerQuery('dashboard');
+        
+        // Optimize the query, eager load the user preferences
+        $nodes = $q->with('userPreference')->get();
+        
 		return View::make('admin::navigation.dashboard', compact('nodes'));
 	}
 
