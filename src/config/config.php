@@ -14,9 +14,14 @@ return array(
 	'defaults' => array(
 		array(
 			'color' => '#334455',
+			'icon_class' => 'icon-cog',
 			'filter' => array(
 				'alias' => array(
+					'home',
 					'admin*'
+				),
+				'method' => array(
+					'post'
 				),
 			)
 		)
