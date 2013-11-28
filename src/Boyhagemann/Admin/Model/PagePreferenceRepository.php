@@ -61,11 +61,13 @@ class PagePreferenceRepository
 	{
 		if(Str::startsWith($phrase, '*')) {
 			$match = substr($phrase, 1);
-			return Str::endsWith($match, $page->$type);
+			return Str::endsWith($page->$type, $match);
 		}
-		elseif(Str::endsWith($phrase, '*')) {
+
+		if(Str::endsWith($phrase, '*')) {
 			$match = substr($phrase, 0, -1);
-			return Str::startsWith($match, $page->$type);
+
+			return Str::startsWith($page->$type, $match);
 		}
 
 		return $page->$type == $phrase;

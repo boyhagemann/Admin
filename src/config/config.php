@@ -16,10 +16,7 @@ return array(
 			'color' => '#334455',
 			'filter' => array(
 				'alias' => array(
-					'home*'
-				),
-				'method' => array(
-					'post'
+					'admin*'
 				),
 			)
 		)
