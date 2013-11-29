@@ -5,6 +5,7 @@ namespace Boyhagemann\Admin\Subscriber;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Admin\Controller\ResourceController;
 use Illuminate\Events\Dispatcher as Events;
+use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Navigation\Model\Node;
 use Boyhagemann\Pages\Model\Page;
 use NavigationContainersTableSeeder;
