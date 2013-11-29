@@ -6,6 +6,7 @@ use Illuminate\Events\Dispatcher as Events;
 use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Crud\CrudController;
 use Boyhagemann\Admin\Controller\ResourceController;
+use Boyhagemann\Pages\Model\Page;
 use DeSmart\ResponseException\Exception as ResponseException;
 use Redirect;
 
@@ -33,8 +34,10 @@ class RedirectToResource
 		}
 
 		// Redirect to the newly created resource
-		$route = $controller->getBaseRoute() . '.create';
-		ResponseException::chain(Redirect::route($route))->fire();
+		$page = Page::whereController($model->controller . '@create')->first();
+
+		ResponseException::chain(Redirect::route($page->alias))->fire();
+
 	}
 
 }
