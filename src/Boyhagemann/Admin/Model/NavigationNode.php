@@ -3,26 +3,36 @@
 namespace Boyhagemann\Admin\Model;
 
 use Boyhagemann\Navigation\Model\Node;
-use Sentry;
 
 class NavigationNode extends Node
 {
-
+	/**
+	 * @param $value
+	 * @return string
+	 */
 	public function getColorAttribute($value)
 	{
-		return $this->userPreference ? $this->userPreference->color : '#31b0d5';
+		$preference = $this->page->userPreference;
+		return $preference && $preference->color ? $preference->color : '#31b0d5';
 	}
 
+	/**
+	 * @param $value
+	 * @return string
+	 */
 	public function getIconClassAttribute($value)
 	{
-		return $this->userPreference ? $this->userPreference->icon_class : 'icon-file';
+		$preference = $this->page->userPreference;
+		return $preference && $preference->icon_class ? $preference->icon_class : 'icon-file';
 	}
 
-	public function userPreference()
+	/**
+	 * @return Page
+	 */
+	public function page()
 	{
-		$userId = Sentry::check() ? Sentry::getUser()->id : -1;
-
-		return $this->page->hasOne('Boyhagemann\Admin\Model\PagePreference', 'page_id')->where('user_id', '=', $userId);
+		return $this->belongsTo('Boyhagemann\Admin\Model\Page');
 	}
+
 }
 
