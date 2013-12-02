@@ -37,8 +37,8 @@ class AddGenerateAdminHookToResource
 
 		// Start up the generator
 		$generator = App::make('Boyhagemann\Crud\ControllerGenerator');
-		$generator->setClassName(str_replace(' ', '', $model->title));
-		$generator->setNamespace('Admin');
+		$generator->setClassName($model->controller);
+		$generator->setModelClass(str_replace('Resource', '', $model->controller));
 
 		// Determine the file name
 		$filename = $model->path . '/' . str_replace('\\', '/', $model->controller) . '.php';

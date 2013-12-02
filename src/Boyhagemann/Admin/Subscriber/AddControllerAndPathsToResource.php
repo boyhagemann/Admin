@@ -37,8 +37,8 @@ class AddControllerAndPathsToResource
 		$model->rules['controller'] .= ',' . $model->id;
 
 		// Add data
-		$model->controller = 'Admin\\' . Str::studly($model->title) . 'Controller';
-		$model->path = '../app/controllers';
+		$model->controller = Str::studly($model->title) . 'Resource';
+		$model->path = '../app/resources';
 		$model->save();
 	}
 
