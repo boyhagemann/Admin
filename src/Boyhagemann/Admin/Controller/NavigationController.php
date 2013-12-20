@@ -3,7 +3,7 @@
 namespace Boyhagemann\Admin\Controller;
 
 use Boyhagemann\Admin\Model\NavigationNode as Node;
-use Boyhagemann\Admin\Model\PagePreferenceRepository;
+use Boyhagemann\Admin\Model\PageFavorite;
 use View, Sentry;
 
 class NavigationController extends \BaseController
@@ -16,6 +16,17 @@ class NavigationController extends \BaseController
         $nodes = $q->with('page', 'page.userPreference')->get();
 
 		return View::make('admin::navigation.dashboard', compact('nodes'));
+	}
+
+	public function favorites()
+	{
+		if(!Sentry::check()) {
+			return;
+		}
+
+		$nodes = PageFavorite::whereUserId(Sentry::getUser()->id)->with('page', 'page.userPreference')->get();
+
+		return View::make('admin::navigation.favorites', compact('nodes'));
 	}
 
 }

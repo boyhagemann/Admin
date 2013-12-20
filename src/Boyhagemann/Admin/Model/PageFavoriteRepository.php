@@ -2,11 +2,10 @@
 
 namespace Boyhagemann\Admin\Model;
 
-use Boyhagemann\Pages\Model\Page;
 use Cartalyst\Sentry\Users\UserInterface;
 use Config, Str;
 
-class PagePreferenceRepository
+class PageFavoriteRepository
 {
 	/**
 	 * @param UserInterface $user
@@ -16,7 +15,7 @@ class PagePreferenceRepository
 		foreach(Page::all() as $page) {
 			$preferences = static::findDefaults($page, $user);
 			foreach($preferences[$user->id] as $pageId => $data) {
-				PagePreference::create(array('page_id' => $pageId, 'user_id' => $user->id) + $data);
+				PageFavorite::create(array('page_id' => $pageId, 'user_id' => $user->id) + $data);
 			}
 		}
 	}
@@ -29,7 +28,7 @@ class PagePreferenceRepository
 		foreach(Sentry::findAllUsers() as $user) {
 			$preferences = static::findDefaults($page, $user);
 			foreach($preferences[$user->id] as $pageId => $data) {
-				PagePreference::create(array('page_id' => $pageId, 'user_id' => $user->id) + $data);
+				PageFavorite::create(array('page_id' => $pageId, 'user_id' => $user->id) + $data);
 			}
 		}
 	}
@@ -46,7 +45,7 @@ class PagePreferenceRepository
 			$user->id => array(),
 		);
 
-		foreach(Config::get('admin::config.preferences') as $preset) {
+		foreach(Config::get('admin::config.favorites') as $preset) {
 
 			foreach($preset['match'] as $type => $match) {
 
@@ -54,14 +53,11 @@ class PagePreferenceRepository
 
 					if(static::matchPage($page, $type, $phrase)) {
 
-						// Check if there is a color preset
-						if(isset($preset['color'])) {
-							$preferences[$user->id][$page->id]['color'] = $preset['color'];
-						}
+						$preferences[$user->id][$page->id] = array();
 
-						// Check if there is an icon preset
-						if(isset($preset['icon_class'])) {
-							$preferences[$user->id][$page->id]['icon_class'] = $preset['icon_class'];
+						// Check if there is a params preset
+						if(isset($preset['params'])) {
+							$preferences[$user->id][$page->id]['params'] = $preset['params'];
 						}
 
 					}
