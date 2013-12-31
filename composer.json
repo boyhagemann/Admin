@@ -10,6 +10,7 @@
     "require": {
         "php": ">=5.3.0",
         "illuminate/support": "4.0.x",
+		"boyhagemann/matcher": "dev-master",
 		"boyhagemann/crud": "dev-master",
 		"boyhagemann/navigation": "dev-master",
 		"boyhagemann/user": "dev-master"

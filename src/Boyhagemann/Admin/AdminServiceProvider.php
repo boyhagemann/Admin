@@ -25,6 +25,7 @@ class AdminServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('boyhagemann/admin', 'admin');
+		$this->app->register('Boyhagemann\Matcher\MatcherServiceProvider');
 	}
         
     /**

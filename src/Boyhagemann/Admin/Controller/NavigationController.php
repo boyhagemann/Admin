@@ -24,7 +24,7 @@ class NavigationController extends \BaseController
 			return;
 		}
 
-		$nodes = PageFavorite::whereUserId(Sentry::getUser()->id)->with('page', 'page.userPreference')->get();
+		$nodes = PageFavorite::whereUserId(Sentry::getUser()->id)->with('page', 'page.userPreference')->orderBy('order')->get();
 
 		return View::make('admin::navigation.favorites', compact('nodes'));
 	}
