@@ -50,6 +50,8 @@ class AddGenerateAdminHookToResource
 		// Create the resource pages
 		$pages = PageRepository::createResourcePages($model->title, $model->controller);
 
+		require_once $filename;
+
 		// Get the newly create controller and get the modelBuilder
 		// We need to trigger the model generate event so that the model is
 		// actually generated
