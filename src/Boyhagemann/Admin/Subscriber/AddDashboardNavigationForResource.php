@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Boyhagemann\Navigation\Model\Node;
 use Boyhagemann\Pages\Model\Page;
 use NavigationContainersTableSeeder;
+use Boyhagemann\Form\FormBuilder;
 use Input, Str;
 
 class AddDashboardNavigationForResource
@@ -21,6 +22,7 @@ class AddDashboardNavigationForResource
 	public function subscribe(Events $events)
 	{
 		$events->listen('crud::saved', array($this, 'onSaved'));
+		$events->listen('form.formBuilder.build.before', array($this, 'onBuildForm'));
 	}
 
 	/**
@@ -31,6 +33,12 @@ class AddDashboardNavigationForResource
 	{
 		// We are only interested in a resource controller
 		if(!$controller instanceof ResourceController) {
+			return;
+		}
+
+		// When the form is posted, we need this field.
+		// If it is not checked, then we don't have to do anything.
+		if(!Input::get('create_dashboard_navigation')) {
 			return;
 		}
 
@@ -45,4 +53,19 @@ class AddDashboardNavigationForResource
 
 	}
 
+	/**
+	 * @param FormBuilder $fb
+	 */
+	public function onBuildForm(FormBuilder $fb)
+	{
+		if($fb->getName() != 'Boyhagemann\Admin\Controller\ResourceController') {
+			return;
+		}
+
+		$fb->checkbox('create_dashboard_navigation')
+			->choices(array(1 => 'Create dashboard app'))
+			->map(false)
+			->value(array(1))
+			->help('This option will add the resource to the dashboard.');
+	}
 }
